@@ -63,7 +63,7 @@ async def admin_panel(message: types.Message):
 # Generate password handler
 @router.message(lambda message: message.text == 'Сгенирировать пароль')
 async def generate_pass(message: types.Message):
-    await message.answer(generate_password())
+    await message.answer(f'Вот ваш пароль <b>{generate_password()}</b>')
 
 # Unknown message handler
 @router.message()
