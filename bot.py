@@ -20,19 +20,11 @@ def generate_password(length=12):
     return ''.join(random.choice(characters) for _ in range(length))
 
 # Define keyboards
-main = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text='Сгенирировать пароль')],
-        [KeyboardButton(text='id')]
-    ],
-    resize_keyboard=True
-)
 
 main_admin = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text='Сгенирировать пароль')],
         [KeyboardButton(text='/id')],
-        [KeyboardButton(text='Админ')]
     ],
     resize_keyboard=True
 )
@@ -40,12 +32,8 @@ main_admin = ReplyKeyboardMarkup(
 # Start command handler
 @router.message(Command('start'))
 async def start(message: types.Message):
-    if message.from_user.id == int(config.ADMIN_ID):
         await message.answer_sticker('CAACAgIAAxkBAAEMYIZnqIWwZ0Bi-ofAswlID2sBP22FaQAClyUAAncmKEpUlw3HOgpDKTYE')
-        await message.answer(f'Привет, Админ. Этот бот умеет генерировать пароли', reply_markup=main_admin)
-    else:
-        await message.answer_sticker('CAACAgIAAxkBAAEMYIZnqIWwZ0Bi-ofAswlID2sBP22FaQAClyUAAncmKEpUlw3HOgpDKTYE')
-        await message.answer(f'Привет, {message.from_user.first_name}. Этот бот умеет генерировать пароли', reply_markup=main)
+        await message.answer(f'Привет, {message.from_user.first_name}. Этот бот умеет генерировать пароли', reply_markup=main_admin)
 
 # ID command handler
 @router.message(Command('id'))
@@ -63,7 +51,7 @@ async def admin_panel(message: types.Message):
 # Generate password handler
 @router.message(lambda message: message.text == 'Сгенирировать пароль')
 async def generate_pass(message: types.Message):
-    await message.answer(f'Вот ваш пароль <b>{generate_password()}</b>')
+    await message.answer(generate_password())
 
 # Unknown message handler
 @router.message()
