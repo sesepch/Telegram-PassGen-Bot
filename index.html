@@ -1,0 +1,60 @@
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+
+export default function TelegramMiniGame() {
+    const [score, setScore] = useState(0);
+    const [emojiPosition, setEmojiPosition] = useState({ x: 50, y: 50 });
+    const [timeLeft, setTimeLeft] = useState(30);
+    const [gameOver, setGameOver] = useState(false);
+    const emojis = ["😀", "🎯", "⚡", "🔥", "💎", "🚀", "🌟"];
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+    useEffect(() => {
+        if (timeLeft > 0) {
+            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+            return () => clearTimeout(timer);
+        } else {
+            setGameOver(true);
+        }
+    }, [timeLeft]);
+
+    const moveEmoji = () => {
+        if (!gameOver) {
+            setEmojiPosition({
+                x: Math.random() * 90,
+                y: Math.random() * 90,
+            });
+            setScore(score + 1);
+        }
+    };
+
+    return (
+        <div className="w-full h-screen flex flex-col items-center justify-center bg-gray-900 text-white relative">
+            <h1 className="text-3xl font-bold">Catch the Emoji! 🎯</h1>
+            <p className="mt-2 text-lg">Time Left: {timeLeft}s</p>
+            <p className="mt-2 text-lg">Score: {score}</p>
+
+            {gameOver ? (
+                <div className="mt-4 text-center">
+                    <h2 className="text-2xl font-bold">Game Over!</h2>
+                    <p className="text-lg">Final Score: {score}</p>
+                    <Button className="mt-4" onClick={() => {
+                        setScore(0);
+                        setTimeLeft(30);
+                        setGameOver(false);
+                    }}>Restart</Button>
+                </div>
+            ) : (
+                <motion.div
+                    className="text-4xl absolute cursor-pointer"
+                    style={{ left: `${emojiPosition.x}%`, top: `${emojiPosition.y}%` }}
+                    whileTap={{ scale: 1.2 }}
+                    onClick={moveEmoji}
+                >
+                    {randomEmoji}
+                </motion.div>
+            )}
+        </div>
+    );
+}

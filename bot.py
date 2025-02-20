@@ -25,6 +25,7 @@ main_admin = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text='Сгенирировать пароль')],
         [KeyboardButton(text='/id')],
+        [KeyboardButton(text='Приложение')]
     ],
     resize_keyboard=True
 )
@@ -40,18 +41,27 @@ async def start(message: types.Message):
 async def getid(message: types.Message):
     await message.answer(f'{message.from_user.id}')
 
-# Admin panel handler
-@router.message(lambda message: message.text == 'Админ')
-async def admin_panel(message: types.Message):
-    if message.from_user.id == int(config.ADMIN_ID):
-        await message.answer('Ты админ, круто!', reply_markup=main_admin)
-    else:
-        await message.answer('<b>Пожалуйста, используй кнопки</b>', parse_mode='html', reply_markup=main)
-
 # Generate password handler
 @router.message(lambda message: message.text == 'Сгенирировать пароль')
 async def generate_pass(message: types.Message):
     await message.answer(generate_password())
+
+@router.message(lambda message: message.text == 'Домой')
+async def home(message: types.Message):
+    await message.answer('Ты дома', reply_markup=main_admin)
+
+@router.message(lambda message: message.text == 'Приложение')
+async def app(message: types.Message):
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(
+                text="Открыть приложение",
+                web_app=types.WebAppInfo(url="https://sesepch.github.io/telegram-test-app/")
+            )], [KeyboardButton(text='Домой')]
+        ],
+        resize_keyboard=True
+    )
+    await message.answer("Нажмите ниже чтобы открыть приложение!", reply_markup=keyboard)
 
 # Unknown message handler
 @router.message()
